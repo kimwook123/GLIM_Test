@@ -186,25 +186,6 @@ void CMFCStudyappDlg::OnBnClickedBtnImg()
 
 	memset(fm, 0xff, nWidth*nHeight); // 사이즈를 지정하여 이미지를 조절할 수 있다. memset 쓸 때 m_image.Create 부분의 nHeight를 -로 바꿔주면 된다. 
 
-	//for (int j = 0; j < nHeight; j++) // 세로 nHeight 수 만큼의 픽셀
-	//{
-	//	for (int i = 0; i < nWidth; i++) // 가로 nWidth 수 만큼의 픽셀
-	//	{
-	//		fm[j * nPitch + i] = j % 255; // 이미지 밝기값 조절, 모든 이미지 조절
-	//	}
-	//}
-
-	//fm[12 * nPitch + 16] = 0; // 해당 픽셀 위치 칠하기 nHeight * nPitch + nWidth
-	//fm[0 * nPitch + 0] = 128;
-	//fm[0 * nPitch + 1] = 128;
-	//for (int j = 0; j < nHeight / 2; j++)
-	//{
-	//	for (int i = 0; i < nWidth / 2; i++)
-	//	{
-	//		fm[j * nPitch + i] = 128;
-	//	}
-	//}
-
 	UpdateDisplay();
 	// 이미지를 그린다.
 }
@@ -243,22 +224,16 @@ void CMFCStudyappDlg::moveRect()
 	int nWidth = m_image.GetWidth();
 	int nHeight = m_image.GetHeight();
 	int nPitch = m_image.GetPitch();
+	int nRadius = 10;
 	unsigned char* fm = (unsigned char*)m_image.GetBits(); // 이미지의 첫 번째 포인터를 가져온다.
 
-	memset(fm, 0xff, nWidth * nHeight);
+	memset(fm, 0xff, nWidth * nHeight); // 이걸 지우면 갱신이 아니라 로그가 남아서 원이 이동하는게 아니라 선이 그려지는 것처럼 보이게 됨.
 
-	for (int j = nSttY; j < nSttY+48;j++)
-	{
-		for (int i = nSttX; i < nSttX+64; i++)
-		{
-			if (validImagePos(i, j))
-			{
-				fm[j * nPitch + i] = nGray;
-			}
-		}
-	}
-	nSttX++;
-	nSttY++;
+	DrawCircle(fm, nSttX++, nSttY++, nRadius, nGray);
+
+	//DrawCircle(fm, nSttX, nSttY, nRadius, 0xff);
+	//DrawCircle(fm, ++nSttX, ++nSttY, nRadius, nGray);
+
 	UpdateDisplay();
 }
 
@@ -279,4 +254,36 @@ BOOL CMFCStudyappDlg::validImagePos(int x, int y)
 	CRect rect(0, 0, nWidth, nHeight);
 
 	return rect.PtInRect(CPoint(x, y));
+}
+
+void CMFCStudyappDlg::DrawCircle(unsigned char* fm, int x, int y, int nRadius, int nGray)
+{
+	int nCenterX = x + nRadius;
+	int nCenterY = y + nRadius;
+	int nPitch = m_image.GetPitch();
+
+	for (int j = y; j < y + nRadius * 2; j++)
+	{
+		for (int i = x; i < x + nRadius * 2; i++)
+		{
+			if (isInCircle(i, j, nCenterX, nCenterY, nRadius))
+				fm[j * nPitch + i] = nGray;
+		}
+	}
+}
+
+BOOL CMFCStudyappDlg::isInCircle(int x, int y, int nCenterX, int nCenterY, int nRadius)
+{
+	bool bRet = false;
+
+	double dX = x - nCenterX;
+	double dY = y - nCenterY;
+	double dDist = dX * dX + dY * dY;
+
+	if (dDist < nRadius * nRadius)
+	{
+		bRet = true;
+	}
+
+	return bRet;
 }
