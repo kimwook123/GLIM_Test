@@ -38,9 +38,15 @@ public:
 	afx_msg void OnBnClickedBtnImg();
 	afx_msg void OnBnClickedBtnSave();
 	afx_msg void OnBnClickedBtnLoad();
+	afx_msg void OnBnClickedBtnAct();
+	afx_msg void OnBnClickedSetButton();
 	void UpdateDisplay();
 	void moveRect();
-	afx_msg void OnBnClickedBtnAct();
-	void DrawCircle(unsigned char* fm, int i, int j, int nRadius, int nGray);
+	void initImage();
+	void DrawCircle(int nRadius);
+	void drawCross(CPoint ptCenter, int size);
+	void drawYellowCircle(CPoint ptCenter, int size);
+	CPoint findCenter();
 	BOOL isInCircle(int i,int j,int nCenterX,int nCenterY,int nRadius);
+	int Circle_size_set;
 };

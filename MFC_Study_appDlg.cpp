@@ -7,6 +7,7 @@
 #include "MFC_Study_app.h"
 #include "MFC_Study_appDlg.h"
 #include "afxdialogex.h"
+#include <math.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -69,6 +70,7 @@ BEGIN_MESSAGE_MAP(CMFCStudyappDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_SAVE, &CMFCStudyappDlg::OnBnClickedBtnSave)
 	ON_BN_CLICKED(IDC_BTN_LOAD, &CMFCStudyappDlg::OnBnClickedBtnLoad)
 	ON_BN_CLICKED(IDC_BTN_ACT, &CMFCStudyappDlg::OnBnClickedBtnAct)
+	ON_BN_CLICKED(IDC_SET_BUTTON, &CMFCStudyappDlg::OnBnClickedSetButton)
 END_MESSAGE_MAP()
 
 
@@ -103,7 +105,7 @@ BOOL CMFCStudyappDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
-	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+	srand((unsigned int)(time(NULL))); // 난수표를 랜덤하게 골라서 난수를 발생시키기 위해
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -157,9 +159,7 @@ HCURSOR CMFCStudyappDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
-void CMFCStudyappDlg::OnBnClickedBtnImg()
+void CMFCStudyappDlg::initImage() // 도형이 그려질 도화지 생성 설정하기
 {
 	int nWidth = 640;
 	int nHeight = 480;
@@ -177,17 +177,24 @@ void CMFCStudyappDlg::OnBnClickedBtnImg()
 		for (int i = 0; i < 256; i++)
 		{
 			rgb[i].rgbRed = rgb[i].rgbGreen = rgb[i].rgbBlue = i;
-			m_image.SetColorTable(0, 256, rgb); // 흑백처리
 		}
+		m_image.SetColorTable(0, 256, rgb); // 흑백처리
 	}
 
-	int nPitch = m_image.GetPitch();
 	unsigned char* fm = (unsigned char*)m_image.GetBits(); // 이미지의 첫 번째 포인터를 가져온다.
 
-	memset(fm, 0xff, nWidth*nHeight); // 사이즈를 지정하여 이미지를 조절할 수 있다. memset 쓸 때 m_image.Create 부분의 nHeight를 -로 바꿔주면 된다. 
+	memset(fm, 0xff, nWidth * nHeight); // 사이즈를 지정하여 이미지를 조절할 수 있다. memset 쓸 때 m_image.Create 부분의 nHeight를 -로 바꿔주면 된다. 
+
+	CClientDC dc(this);
+	m_image.Draw(dc, 0, 0);
+}
+
+
+void CMFCStudyappDlg::OnBnClickedBtnImg()
+{
+	initImage();
 
 	UpdateDisplay();
-	// 이미지를 그린다.
 }
 
 CString g_strFileImage = (_T("C:\\image\\save.bmp")); // 전역 변수로 선언한 것.
@@ -229,10 +236,7 @@ void CMFCStudyappDlg::moveRect()
 
 	memset(fm, 0xff, nWidth * nHeight); // 이걸 지우면 갱신이 아니라 로그가 남아서 원이 이동하는게 아니라 선이 그려지는 것처럼 보이게 됨.
 
-	DrawCircle(fm, nSttX++, nSttY++, nRadius, nGray);
-
-	//DrawCircle(fm, nSttX, nSttY, nRadius, 0xff);
-	//DrawCircle(fm, ++nSttX, ++nSttY, nRadius, nGray);
+	DrawCircle(nRadius);
 
 	UpdateDisplay();
 }
@@ -256,34 +260,143 @@ BOOL CMFCStudyappDlg::validImagePos(int x, int y)
 	return rect.PtInRect(CPoint(x, y));
 }
 
-void CMFCStudyappDlg::DrawCircle(unsigned char* fm, int x, int y, int nRadius, int nGray)
+void CMFCStudyappDlg::DrawCircle(int nRadius)
 {
-	int nCenterX = x + nRadius;
-	int nCenterY = y + nRadius;
+	int nWidth = m_image.GetWidth();
+	int nHeight = m_image.GetHeight();
 	int nPitch = m_image.GetPitch();
+	unsigned char* fm = (unsigned char*)m_image.GetBits();
+	int nSttX = rand() % nWidth;
+	int nSttY = rand() % nHeight;
 
-	for (int j = y; j < y + nRadius * 2; j++)
+	if (nSttX + (nRadius * 2) > nWidth)
+		nSttX = nSttX - (nSttX + (nRadius * 2) - nWidth);
+	if (nSttY + (nRadius * 2) > nHeight)
+		nSttY = nSttY - (nSttY + (nRadius * 2) - nHeight);
+
+	TRACE("nRadius: %d, (%d, %d)\n", nRadius, nSttX, nSttY);
+
+	for (int j = nSttY; j < nSttY + nRadius * 2; j++)
 	{
-		for (int i = x; i < x + nRadius * 2; i++)
+		for (int i = nSttX; i < nSttX + nRadius * 2; i++)
 		{
-			if (isInCircle(i, j, nCenterX, nCenterY, nRadius))
-				fm[j * nPitch + i] = nGray;
+			if (isInCircle(i, j, nSttX + nRadius, nSttY + nRadius, nRadius))
+				fm[j * nPitch + i] = 0x00;
 		}
 	}
+
+	CClientDC dc(this);
+	m_image.Draw(dc, 0, 0);
 }
 
 BOOL CMFCStudyappDlg::isInCircle(int x, int y, int nCenterX, int nCenterY, int nRadius)
 {
 	bool bRet = false;
 
-	double dX = x - nCenterX;
-	double dY = y - nCenterY;
+	double dX = x - nCenterX+0.5;
+	double dY = y - nCenterY+0.5;
 	double dDist = dX * dX + dY * dY;
 
-	if (dDist < nRadius * nRadius)
+	if ((nRadius * nRadius) - (nRadius * 3) < dDist && dDist < (nRadius * nRadius) + nRadius)
 	{
 		bRet = true;
 	}
 
 	return bRet;
+}
+
+void CMFCStudyappDlg::OnBnClickedSetButton()
+{
+	RedrawWindow();
+	
+	initImage();
+	int nRadius = GetDlgItemInt(IDC_STATIC);
+
+	if (nRadius > m_image.GetHeight())
+	{
+		CString msg;
+		msg.Format(_T("%d보다 작은 값을 입력하세요."), m_image.GetHeight());
+		AfxMessageBox(msg);
+		return;
+	}
+
+	DrawCircle(nRadius);
+	CPoint ptCenter = findCenter();
+	drawCross(ptCenter, nRadius);
+	drawYellowCircle(ptCenter, nRadius);
+}
+
+CPoint CMFCStudyappDlg::findCenter()
+{
+	unsigned char* fm = (unsigned char*)m_image.GetBits();
+	int nWidth = m_image.GetWidth();
+	int nHeight = m_image.GetHeight();
+	int nPitch = m_image.GetPitch();
+
+	CRect rect(0, 0, nWidth, nHeight);
+	int nSumX = 0;
+	int nSumY = 0;
+	int nCount = 0;
+	for (int j = rect.top; j < rect.bottom; j++)
+	{
+		for (int i = rect.left; i < rect.right; i++)
+		{
+			if (fm[j * nPitch + i] != 0xff)
+			{
+				nSumX += i;
+				nSumY += j;
+				nCount++;
+			}
+		}
+	}
+	if (nCount == 0)
+	{
+		AfxMessageBox(_T("Count Error detected!!"));
+	}
+	int nCenterX = nSumX / nCount;
+	int nCenterY = nSumY / nCount;
+
+	TRACE("sum : (%d, %d)\tcount: %d\tcenter: (%d, %d)\n", nSumX, nSumY, nCount, nCenterX, nCenterY);
+	return CPoint(nCenterX, nCenterY);
+}
+
+void CMFCStudyappDlg::drawCross(CPoint ptCenter, int size)
+{
+	CClientDC dc(this);
+
+	int nCenterX = ptCenter.x;
+	int nCenterY = ptCenter.y;
+
+	int nLineLength = size / 10;
+
+	if (nLineLength < 5)
+	{
+		nLineLength = 5;
+	}
+
+	dc.MoveTo(nCenterX - nLineLength, nCenterY);
+	dc.LineTo(nCenterX + nLineLength + 1, nCenterY);
+
+	dc.MoveTo(nCenterX, nCenterY - nLineLength);
+	dc.LineTo(nCenterX, nCenterY + nLineLength + 1);
+}
+
+void CMFCStudyappDlg::drawYellowCircle(CPoint ptCenter, int size)
+{
+	CClientDC dc(this);
+
+	CBrush brush;
+	brush.CreateStockObject(NULL_BRUSH);
+	CBrush* pOldBrush = dc.SelectObject(&brush);
+
+	CPen pen;
+	pen.CreatePen(PS_SOLID, 5, RGB(0xff, 0xff, 0x00));
+	CPen* pOldPen = dc.SelectObject(&pen);
+
+	int nSpace = 10;
+	dc.Ellipse(ptCenter.x - size - nSpace, ptCenter.y - size - nSpace,
+		ptCenter.x + size + nSpace, ptCenter.y + size + nSpace);
+
+	dc.SelectObject(pOldBrush);
+	dc.SelectObject(pOldPen);
 }
