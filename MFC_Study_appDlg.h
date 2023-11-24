@@ -10,7 +10,7 @@
 class CMFCStudyappDlg : public CDialogEx
 {
 private:
-	CImage m_image;
+	//CImage m_image;
 	BOOL validImagePos(int x, int y);
 // 생성입니다.
 public:
@@ -38,10 +38,6 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedBtnImg();
-	afx_msg void OnBnClickedBtnSave();
-	afx_msg void OnBnClickedBtnLoad();
-	afx_msg void OnBnClickedBtnAct();
 	afx_msg void OnBnClickedSetButton();
 	void UpdateDisplay();
 	void moveRect();
@@ -52,8 +48,5 @@ public:
 	CPoint findCenter();
 	BOOL isInCircle(int i,int j,int nCenterX,int nCenterY,int nRadius);
 	int Circle_size_set;
-	afx_msg void OnBnClickedButton1();
 	afx_msg void OnDestroy();
-
-	void CallFunc(int n);
 };

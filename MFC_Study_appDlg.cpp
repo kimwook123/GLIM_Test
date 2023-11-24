@@ -7,6 +7,7 @@
 #include "MFC_Study_app.h"
 #include "MFC_Study_appDlg.h"
 #include "afxdialogex.h"
+#include "CDlgImage.h"
 
 #include <math.h>
 #include <iostream>
@@ -15,7 +16,7 @@
 #define new DEBUG_NEW
 #endif
 
-#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+// #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
 
@@ -36,7 +37,6 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
-//	afx_msg void OnDestroy();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -49,7 +49,6 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-//	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -72,12 +71,7 @@ BEGIN_MESSAGE_MAP(CMFCStudyappDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BTN_IMG, &CMFCStudyappDlg::OnBnClickedBtnImg)
-	ON_BN_CLICKED(IDC_BTN_SAVE, &CMFCStudyappDlg::OnBnClickedBtnSave)
-	ON_BN_CLICKED(IDC_BTN_LOAD, &CMFCStudyappDlg::OnBnClickedBtnLoad)
-	ON_BN_CLICKED(IDC_BTN_ACT, &CMFCStudyappDlg::OnBnClickedBtnAct)
 	ON_BN_CLICKED(IDC_SET_BUTTON, &CMFCStudyappDlg::OnBnClickedSetButton)
-	ON_BN_CLICKED(IDC_BUTTON1, &CMFCStudyappDlg::OnBnClickedButton1)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
@@ -113,9 +107,11 @@ BOOL CMFCStudyappDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
+	MoveWindow(0, 0, 800, 440);
 	m_pDlgImage = new CDlgImage;
 	m_pDlgImage->Create(IDD_CDlgImage, this);
 	m_pDlgImage->ShowWindow(SW_SHOW);
+	m_pDlgImage->MoveWindow(10, 0, 600, 350);
 
 	srand((unsigned int)(time(NULL))); // 난수표를 랜덤하게 골라서 난수를 발생시키기 위해
 
@@ -173,16 +169,20 @@ HCURSOR CMFCStudyappDlg::OnQueryDragIcon()
 
 void CMFCStudyappDlg::initImage() // 도형이 그려질 도화지 생성 설정하기
 {
-	int nWidth = 640;
-	int nHeight = 480;
+	
+
+	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits(); // 이미지의 첫 번째 포인터를 가져온다.
+
+	int nWidth = m_pDlgImage->m_image.GetWidth();
+	int nHeight = m_pDlgImage->m_image.GetHeight();
 	int nBpp = 8;
 
-	if (m_image != NULL)
+	if (m_pDlgImage->m_image != NULL)
 	{
-		m_image.Destroy();
+		m_pDlgImage->m_image.Destroy();
 	}
 
-	m_image.Create(nWidth, -nHeight, nBpp);
+	m_pDlgImage->m_image.Create(nWidth, -nHeight, nBpp);
 	if (nBpp == 8)
 	{
 		static RGBQUAD rgb[256];
@@ -190,48 +190,22 @@ void CMFCStudyappDlg::initImage() // 도형이 그려질 도화지 생성 설정
 		{
 			rgb[i].rgbRed = rgb[i].rgbGreen = rgb[i].rgbBlue = i;
 		}
-		m_image.SetColorTable(0, 256, rgb); // 흑백처리
+		m_pDlgImage->m_image.SetColorTable(0, 256, rgb); // 흑백처리
 	}
 
-	unsigned char* fm = (unsigned char*)m_image.GetBits(); // 이미지의 첫 번째 포인터를 가져온다.
-
-	memset(fm, 0xff, nWidth * nHeight); // 사이즈를 지정하여 이미지를 조절할 수 있다. memset 쓸 때 m_image.Create 부분의 nHeight를 -로 바꿔주면 된다. 
-
-	CClientDC dc(this);
-	m_image.Draw(dc, 0, 0);
-}
-
-
-void CMFCStudyappDlg::OnBnClickedBtnImg()
-{
-	initImage();
-
-	UpdateDisplay();
-}
-
-CString g_strFileImage = (_T("C:\\image\\save.bmp")); // 전역 변수로 선언한 것.
-void CMFCStudyappDlg::OnBnClickedBtnSave()
-{
-	m_image.Save(g_strFileImage); // 경로에 이미지 파일을 저장한다.
-}
-
-
-void CMFCStudyappDlg::OnBnClickedBtnLoad()
-{
-	if (m_image != NULL)
+	if (fm)
 	{
-		m_image.Destroy();
+		memset(fm, 0xff, nWidth * nHeight); // 사이즈를 지정하여 이미지를 조절할 수 있다. memset 쓸 때 m_image.Create 부분의 nHeight를 -로 바꿔주면 된다. 
+
+		CClientDC dc(m_pDlgImage);
+		m_pDlgImage->m_image.Draw(dc, 0, 0);
 	}
-
-	m_image.Load(g_strFileImage); // 경로의 이미지 파일을 가져온다.
-
-	UpdateDisplay();
 }
 
 void CMFCStudyappDlg::UpdateDisplay() // 그냥 화면 업데이트 로직 따로 뺀 것.
 {
 	CClientDC dc(this);
-	m_image.Draw(dc, 0, 0);
+	m_pDlgImage->m_image.Draw(dc, 0, 0);
 }
 
 void CMFCStudyappDlg::moveRect()
@@ -239,12 +213,12 @@ void CMFCStudyappDlg::moveRect()
 	static int nSttX = 0;
 	static int nSttY = 0;
 
-	int nGray = 80;
-	int nWidth = m_image.GetWidth();
-	int nHeight = m_image.GetHeight();
-	int nPitch = m_image.GetPitch();
+	int nGray   = 80;
+	int nWidth  = m_pDlgImage->m_image.GetWidth();
+	int nHeight = m_pDlgImage->m_image.GetPitch();
 	int nRadius = 10;
-	unsigned char* fm = (unsigned char*)m_image.GetBits(); // 이미지의 첫 번째 포인터를 가져온다.
+
+	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits(); // 이미지의 첫 번째 포인터를 가져온다.
 
 	memset(fm, 0xff, nWidth * nHeight); // 이걸 지우면 갱신이 아니라 로그가 남아서 원이 이동하는게 아니라 선이 그려지는 것처럼 보이게 됨.
 
@@ -253,19 +227,10 @@ void CMFCStudyappDlg::moveRect()
 	UpdateDisplay();
 }
 
-void CMFCStudyappDlg::OnBnClickedBtnAct()
-{
-	for (int i = 0; i < 100; i++)
-	{
-		moveRect();
-		Sleep(10);
-	}
-}
-
 BOOL CMFCStudyappDlg::validImagePos(int x, int y)
 {
-	int nWidth = m_image.GetWidth();
-	int nHeight = m_image.GetHeight();
+	int nWidth  = m_pDlgImage->m_image.GetWidth();
+	int nHeight = m_pDlgImage->m_image.GetHeight();
 
 	CRect rect(0, 0, nWidth, nHeight);
 
@@ -274,10 +239,14 @@ BOOL CMFCStudyappDlg::validImagePos(int x, int y)
 
 void CMFCStudyappDlg::DrawCircle(int nRadius)
 {
-	int nWidth = m_image.GetWidth();
-	int nHeight = m_image.GetHeight();
-	int nPitch = m_image.GetPitch();
-	unsigned char* fm = (unsigned char*)m_image.GetBits();
+	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits();
+	
+	int nWidth  = m_pDlgImage->m_image.GetWidth();
+	int nHeight = m_pDlgImage->m_image.GetHeight();
+	int nPitch  = m_pDlgImage->m_image.GetPitch();
+
+	memset(fm, 0xff, nWidth * nHeight); // 그릴 때마다 도화지 초기화하기
+
 	int nSttX = rand() % nWidth;
 	int nSttY = rand() % nHeight;
 
@@ -297,16 +266,16 @@ void CMFCStudyappDlg::DrawCircle(int nRadius)
 		}
 	}
 
-	CClientDC dc(this);
-	m_image.Draw(dc, 0, 0);
+	CClientDC dc(m_pDlgImage);
+	m_pDlgImage->m_image.Draw(dc, 0, 0);
 }
 
 BOOL CMFCStudyappDlg::isInCircle(int x, int y, int nCenterX, int nCenterY, int nRadius)
 {
 	bool bRet = false;
 
-	double dX = x - nCenterX+0.5;
-	double dY = y - nCenterY+0.5;
+	double dX    = x - nCenterX+0.5;
+	double dY    = y - nCenterY+0.5;
 	double dDist = dX * dX + dY * dY;
 
 	if ((nRadius * nRadius) - (nRadius * 3) < dDist && dDist < (nRadius * nRadius) + nRadius)
@@ -324,10 +293,10 @@ void CMFCStudyappDlg::OnBnClickedSetButton()
 	initImage();
 	int nRadius = GetDlgItemInt(IDC_STATIC);
 
-	if (nRadius > m_image.GetHeight())
+	if (nRadius > m_pDlgImage->m_image.GetHeight())
 	{
 		CString msg;
-		msg.Format(_T("%d보다 작은 값을 입력하세요."), m_image.GetHeight());
+		msg.Format(_T("%d보다 작은 값을 입력하세요."), m_pDlgImage->m_image.GetHeight());
 		AfxMessageBox(msg);
 		return;
 	}
@@ -340,14 +309,14 @@ void CMFCStudyappDlg::OnBnClickedSetButton()
 
 CPoint CMFCStudyappDlg::findCenter()
 {
-	unsigned char* fm = (unsigned char*)m_image.GetBits();
-	int nWidth = m_image.GetWidth();
-	int nHeight = m_image.GetHeight();
-	int nPitch = m_image.GetPitch();
+	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits();
+	int nWidth  = m_pDlgImage->m_image.GetWidth();
+	int nHeight = m_pDlgImage->m_image.GetHeight();
+	int nPitch  = m_pDlgImage->m_image.GetPitch();
 
 	CRect rect(0, 0, nWidth, nHeight);
-	int nSumX = 0;
-	int nSumY = 0;
+	int nSumX  = 0;
+	int nSumY  = 0;
 	int nCount = 0;
 	for (int j = rect.top; j < rect.bottom; j++)
 	{
@@ -374,7 +343,7 @@ CPoint CMFCStudyappDlg::findCenter()
 
 void CMFCStudyappDlg::drawCross(CPoint ptCenter, int size)
 {
-	CClientDC dc(this);
+	CClientDC dc(m_pDlgImage);
 
 	int nCenterX = ptCenter.x;
 	int nCenterY = ptCenter.y;
@@ -395,7 +364,7 @@ void CMFCStudyappDlg::drawCross(CPoint ptCenter, int size)
 
 void CMFCStudyappDlg::drawYellowCircle(CPoint ptCenter, int size)
 {
-	CClientDC dc(this);
+	CClientDC dc(m_pDlgImage);
 
 	CBrush brush;
 	brush.CreateStockObject(NULL_BRUSH);
@@ -407,26 +376,16 @@ void CMFCStudyappDlg::drawYellowCircle(CPoint ptCenter, int size)
 
 	int nSpace = 10;
 	dc.Ellipse(ptCenter.x - size - nSpace, ptCenter.y - size - nSpace,
-		ptCenter.x + size + nSpace, ptCenter.y + size + nSpace);
+		       ptCenter.x + size + nSpace, ptCenter.y + size + nSpace);
 
 	dc.SelectObject(pOldBrush);
 	dc.SelectObject(pOldPen);
-}
-
-void CMFCStudyappDlg::OnBnClickedButton1()
-{
-	m_pDlgImage->ShowWindow(SW_SHOW);
 }
 
 void CMFCStudyappDlg::OnDestroy() // new delete
 {
 	CDialogEx::OnDestroy();
 
-	delete m_pDlgImage;
-}
-
-void CMFCStudyappDlg::CallFunc(int n)
-{
-	/*int nData = n;*/
-	std::cout << n << std::endl;
+	if (m_pDlgImage)
+		delete m_pDlgImage;
 }
