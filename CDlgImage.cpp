@@ -30,6 +30,7 @@ void CDlgImage::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CDlgImage, CDialogEx)
 	ON_WM_PAINT()
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 

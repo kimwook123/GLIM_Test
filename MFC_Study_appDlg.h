@@ -40,7 +40,6 @@ protected:
 public:
 	afx_msg void OnBnClickedSetButton();
 	void UpdateDisplay();
-	void moveRect();
 	void initImage();
 	void DrawCircle(int nRadius);
 	void drawCross(CPoint ptCenter, int size);

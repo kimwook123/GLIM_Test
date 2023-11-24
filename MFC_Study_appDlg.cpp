@@ -37,6 +37,7 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
+//	afx_msg void OnDestroy();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -49,6 +50,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+//	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -169,8 +171,6 @@ HCURSOR CMFCStudyappDlg::OnQueryDragIcon()
 
 void CMFCStudyappDlg::initImage() // 도형이 그려질 도화지 생성 설정하기
 {
-	
-
 	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits(); // 이미지의 첫 번째 포인터를 가져온다.
 
 	int nWidth = m_pDlgImage->m_image.GetWidth();
@@ -195,36 +195,17 @@ void CMFCStudyappDlg::initImage() // 도형이 그려질 도화지 생성 설정
 
 	if (fm)
 	{
-		memset(fm, 0xff, nWidth * nHeight); // 사이즈를 지정하여 이미지를 조절할 수 있다. memset 쓸 때 m_image.Create 부분의 nHeight를 -로 바꿔주면 된다. 
+		memset(fm, 0xff, nWidth * nHeight);
 
 		CClientDC dc(m_pDlgImage);
 		m_pDlgImage->m_image.Draw(dc, 0, 0);
 	}
 }
 
-void CMFCStudyappDlg::UpdateDisplay() // 그냥 화면 업데이트 로직 따로 뺀 것.
+void CMFCStudyappDlg::UpdateDisplay() // 화면 업데이트 로직 따로 뺀 것.
 {
 	CClientDC dc(this);
 	m_pDlgImage->m_image.Draw(dc, 0, 0);
-}
-
-void CMFCStudyappDlg::moveRect()
-{
-	static int nSttX = 0;
-	static int nSttY = 0;
-
-	int nGray   = 80;
-	int nWidth  = m_pDlgImage->m_image.GetWidth();
-	int nHeight = m_pDlgImage->m_image.GetPitch();
-	int nRadius = 10;
-
-	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits(); // 이미지의 첫 번째 포인터를 가져온다.
-
-	memset(fm, 0xff, nWidth * nHeight); // 이걸 지우면 갱신이 아니라 로그가 남아서 원이 이동하는게 아니라 선이 그려지는 것처럼 보이게 됨.
-
-	DrawCircle(nRadius);
-
-	UpdateDisplay();
 }
 
 BOOL CMFCStudyappDlg::validImagePos(int x, int y)
