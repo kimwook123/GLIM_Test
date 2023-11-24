@@ -7,12 +7,15 @@
 #include "MFC_Study_app.h"
 #include "MFC_Study_appDlg.h"
 #include "afxdialogex.h"
+
 #include <math.h>
+#include <iostream>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
 
@@ -32,6 +35,8 @@ public:
 // 구현입니다.
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+//	afx_msg void OnDestroy();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -44,6 +49,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+//	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -71,6 +77,8 @@ BEGIN_MESSAGE_MAP(CMFCStudyappDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_LOAD, &CMFCStudyappDlg::OnBnClickedBtnLoad)
 	ON_BN_CLICKED(IDC_BTN_ACT, &CMFCStudyappDlg::OnBnClickedBtnAct)
 	ON_BN_CLICKED(IDC_SET_BUTTON, &CMFCStudyappDlg::OnBnClickedSetButton)
+	ON_BN_CLICKED(IDC_BUTTON1, &CMFCStudyappDlg::OnBnClickedButton1)
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -104,6 +112,10 @@ BOOL CMFCStudyappDlg::OnInitDialog()
 	//  프레임워크가 이 작업을 자동으로 수행합니다.
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
+
+	m_pDlgImage = new CDlgImage;
+	m_pDlgImage->Create(IDD_CDlgImage, this);
+	m_pDlgImage->ShowWindow(SW_SHOW);
 
 	srand((unsigned int)(time(NULL))); // 난수표를 랜덤하게 골라서 난수를 발생시키기 위해
 
@@ -399,4 +411,22 @@ void CMFCStudyappDlg::drawYellowCircle(CPoint ptCenter, int size)
 
 	dc.SelectObject(pOldBrush);
 	dc.SelectObject(pOldPen);
+}
+
+void CMFCStudyappDlg::OnBnClickedButton1()
+{
+	m_pDlgImage->ShowWindow(SW_SHOW);
+}
+
+void CMFCStudyappDlg::OnDestroy() // new delete
+{
+	CDialogEx::OnDestroy();
+
+	delete m_pDlgImage;
+}
+
+void CMFCStudyappDlg::CallFunc(int n)
+{
+	/*int nData = n;*/
+	std::cout << n << std::endl;
 }

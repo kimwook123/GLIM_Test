@@ -183,6 +183,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CDlgImage.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MFC_Study_app.h" />
     <ClInclude Include="MFC_Study_appDlg.h" />
@@ -191,6 +192,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CDlgImage.cpp" />
     <ClCompile Include="MFC_Study_app.cpp" />
     <ClCompile Include="MFC_Study_appDlg.cpp" />
     <ClCompile Include="pch.cpp">
