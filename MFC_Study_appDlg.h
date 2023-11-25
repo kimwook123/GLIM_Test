@@ -9,9 +9,6 @@
 // CMFCStudyappDlg 대화 상자
 class CMFCStudyappDlg : public CDialogEx
 {
-private:
-	//CImage m_image;
-	BOOL validImagePos(int x, int y);
 // 생성입니다.
 public:
 	CMFCStudyappDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
@@ -41,11 +38,14 @@ public:
 	afx_msg void OnBnClickedSetButton();
 	void UpdateDisplay();
 	void initImage();
-	void DrawCircle(int nRadius);
+	void DrawCircle(int nRadius, unsigned char* fm);
 	void drawCross(CPoint ptCenter, int size);
 	void drawYellowCircle(CPoint ptCenter, int size);
-	CPoint findCenter();
+
+	CPoint findCenter(unsigned char* fm);
 	BOOL isInCircle(int i,int j,int nCenterX,int nCenterY,int nRadius);
 	int Circle_size_set;
 	afx_msg void OnDestroy();
+	CListBox findCenter_x;
+	CListBox findCenter_y;
 };

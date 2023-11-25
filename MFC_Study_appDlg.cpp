@@ -7,7 +7,6 @@
 #include "MFC_Study_app.h"
 #include "MFC_Study_appDlg.h"
 #include "afxdialogex.h"
-#include "CDlgImage.h"
 
 #include <math.h>
 #include <iostream>
@@ -16,7 +15,7 @@
 #define new DEBUG_NEW
 #endif
 
-// #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+//#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
 
@@ -24,6 +23,7 @@ class CAboutDlg : public CDialogEx
 {
 public:
 	CAboutDlg();
+
 
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
@@ -36,8 +36,6 @@ public:
 // 구현입니다.
 protected:
 	DECLARE_MESSAGE_MAP()
-public:
-//	afx_msg void OnDestroy();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -50,7 +48,6 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-//	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -67,6 +64,8 @@ CMFCStudyappDlg::CMFCStudyappDlg(CWnd* pParent /*=nullptr*/)
 void CMFCStudyappDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_LIST1, findCenter_x);
+	DDX_Control(pDX, IDC_LIST2, findCenter_y);
 }
 
 BEGIN_MESSAGE_MAP(CMFCStudyappDlg, CDialogEx)
@@ -109,13 +108,13 @@ BOOL CMFCStudyappDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
-	MoveWindow(0, 0, 800, 440);
+	int Width = 800;
+	int Height = 440;
+	MoveWindow(0, 0, Width, Height);
 	m_pDlgImage = new CDlgImage;
 	m_pDlgImage->Create(IDD_CDlgImage, this);
 	m_pDlgImage->ShowWindow(SW_SHOW);
 	m_pDlgImage->MoveWindow(10, 0, 600, 350);
-
-	srand((unsigned int)(time(NULL))); // 난수표를 랜덤하게 골라서 난수를 발생시키기 위해
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -193,13 +192,13 @@ void CMFCStudyappDlg::initImage() // 도형이 그려질 도화지 생성 설정
 		m_pDlgImage->m_image.SetColorTable(0, 256, rgb); // 흑백처리
 	}
 
-	if (fm)
-	{
-		memset(fm, 0xff, nWidth * nHeight);
 
-		CClientDC dc(m_pDlgImage);
-		m_pDlgImage->m_image.Draw(dc, 0, 0);
-	}
+	memset(fm, 0xff, nWidth * nHeight);
+
+	m_pDlgImage->Invalidate();
+
+	CClientDC dc(m_pDlgImage);
+	m_pDlgImage->m_image.Draw(dc, 0, 0);
 }
 
 void CMFCStudyappDlg::UpdateDisplay() // 화면 업데이트 로직 따로 뺀 것.
@@ -208,19 +207,9 @@ void CMFCStudyappDlg::UpdateDisplay() // 화면 업데이트 로직 따로 뺀 �
 	m_pDlgImage->m_image.Draw(dc, 0, 0);
 }
 
-BOOL CMFCStudyappDlg::validImagePos(int x, int y)
+void CMFCStudyappDlg::DrawCircle(int nRadius, unsigned char* fm)
 {
-	int nWidth  = m_pDlgImage->m_image.GetWidth();
-	int nHeight = m_pDlgImage->m_image.GetHeight();
-
-	CRect rect(0, 0, nWidth, nHeight);
-
-	return rect.PtInRect(CPoint(x, y));
-}
-
-void CMFCStudyappDlg::DrawCircle(int nRadius)
-{
-	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits();
+	fm = (unsigned char*)m_pDlgImage->m_image.GetBits();
 	
 	int nWidth  = m_pDlgImage->m_image.GetWidth();
 	int nHeight = m_pDlgImage->m_image.GetHeight();
@@ -269,10 +258,8 @@ BOOL CMFCStudyappDlg::isInCircle(int x, int y, int nCenterX, int nCenterY, int n
 
 void CMFCStudyappDlg::OnBnClickedSetButton()
 {
-	RedrawWindow();
-	
-	initImage();
 	int nRadius = GetDlgItemInt(IDC_STATIC);
+	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits();
 
 	if (nRadius > m_pDlgImage->m_image.GetHeight())
 	{
@@ -282,23 +269,27 @@ void CMFCStudyappDlg::OnBnClickedSetButton()
 		return;
 	}
 
-	DrawCircle(nRadius);
-	CPoint ptCenter = findCenter();
+	DrawCircle(nRadius, fm);
+	CPoint ptCenter = findCenter(fm);
 	drawCross(ptCenter, nRadius);
 	drawYellowCircle(ptCenter, nRadius);
 }
 
-CPoint CMFCStudyappDlg::findCenter()
+CPoint CMFCStudyappDlg::findCenter(unsigned char* fm)
 {
-	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits();
+	fm = (unsigned char*)m_pDlgImage->m_image.GetBits();
 	int nWidth  = m_pDlgImage->m_image.GetWidth();
 	int nHeight = m_pDlgImage->m_image.GetHeight();
 	int nPitch  = m_pDlgImage->m_image.GetPitch();
 
 	CRect rect(0, 0, nWidth, nHeight);
-	int nSumX  = 0;
-	int nSumY  = 0;
-	int nCount = 0;
+	int nSumX  = 0; // x 좌표 수
+	int nSumY  = 0; // t 좌표 수
+	int nCount = 0; // 총 좌표 개수
+
+	int nCenterX = 0;
+	int nCenterY = 0;
+
 	for (int j = rect.top; j < rect.bottom; j++)
 	{
 		for (int i = rect.left; i < rect.right; i++)
@@ -311,12 +302,30 @@ CPoint CMFCStudyappDlg::findCenter()
 			}
 		}
 	}
-	if (nCount == 0)
+	if (nCount == 0) // 분모가 0일 경우, 예외 처리
 	{
 		AfxMessageBox(_T("Count Error detected!!"));
+		nCenterX = nCenterY = 0;
 	}
-	int nCenterX = nSumX / nCount;
-	int nCenterY = nSumY / nCount;
+	else
+	{
+		nCenterX = nSumX / nCount;
+		nCenterY = nSumY / nCount;
+	}
+
+	// findCenter_x에 대한 처리
+	findCenter_x.ResetContent();  // 리스트 초기화
+
+	CString centerXText;
+	centerXText.Format(_T("%d"), nCenterX);
+	findCenter_x.AddString(centerXText);
+
+	// findCenter_y에 대한 처리
+	findCenter_y.ResetContent();  // 리스트 초기화
+
+	CString centerYText;
+	centerYText.Format(_T("%d"), nCenterY);
+	findCenter_y.AddString(centerYText);
 
 	TRACE("sum : (%d, %d)\tcount: %d\tcenter: (%d, %d)\n", nSumX, nSumY, nCount, nCenterX, nCenterY);
 	return CPoint(nCenterX, nCenterY);
@@ -367,6 +376,6 @@ void CMFCStudyappDlg::OnDestroy() // new delete
 {
 	CDialogEx::OnDestroy();
 
-	if (m_pDlgImage)
-		delete m_pDlgImage;
+	delete m_pDlgImage;
+	m_pDlgImage = nullptr;
 }

@@ -40,7 +40,6 @@ BOOL CDlgImage::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	MoveWindow(10, 0, 600, 300);
 	InitImage();
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -57,8 +56,6 @@ void CDlgImage::OnPaint()
 	{
 		m_image.Draw(dc, 0, 0);
 	}
-
-	drawData(&dc);
 }
 
 void CDlgImage::InitImage()
@@ -67,7 +64,7 @@ void CDlgImage::InitImage()
 	int nHeight = 350;
 	int nBpp = 8;
 
-	if (m_image != NULL)
+	if (m_image != NULL)  // 겹침이 아니라 갱신을 위한 기존 이미지 제거
 	{
 		m_image.Destroy();
 	}
@@ -82,30 +79,10 @@ void CDlgImage::InitImage()
 		}
 		m_image.SetColorTable(0, 256, rgb); // 흑백처리
 	}
-
-	int nPitch = m_image.GetPitch();
 	unsigned char* fm = (unsigned char*)m_image.GetBits(); // 이미지의 첫 번째 포인터를 가져온다.
 
-	memset(fm, 0xff, nWidth * nHeight); // 사이즈를 지정하여 이미지를 조절할 수 있다. memset 쓸 때 m_image.Create 부분의 nHeight를 -로 바꿔주면 된다. 
-}
-
-void CDlgImage::drawData(CDC* pDC)
-{
-	CRect rect(0, 0, 100, 100);
-	CPen pen;
-	CBrush brush;
-
-	brush.CreateStockObject(NULL_BRUSH);
-	CBrush* pOldBrush = pDC->SelectObject(&brush);
-
-	pen.CreatePen(PS_SOLID, 5, RGB(0xff, 0xff, 0x00));
-	CPen* pOldPen = pDC->SelectObject(&pen);
-
-	for (int i = 0; i < m_nDataCount; i++)
+	if (fm) // 유효성 검사
 	{
-		rect.SetRect(m_ptData[i], m_ptData[i]);
-		rect.InflateRect(5, 10);
-		pDC->Ellipse(rect);
+		memset(fm, 0xff, nWidth * nHeight);
 	}
-	pDC->SelectObject(pOldPen);
 }
