@@ -15,7 +15,7 @@
 #define new DEBUG_NEW
 #endif
 
-//#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+//#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console") // 콘솔창 띄우기.
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
 
@@ -23,7 +23,6 @@ class CAboutDlg : public CDialogEx
 {
 public:
 	CAboutDlg();
-
 
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
@@ -50,10 +49,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
-
 // CMFCStudyappDlg 대화 상자
-
-
 
 CMFCStudyappDlg::CMFCStudyappDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_MFC_STUDY_APP_DIALOG, pParent)
@@ -111,7 +107,7 @@ BOOL CMFCStudyappDlg::OnInitDialog()
 	int Width = 800;
 	int Height = 440;
 	MoveWindow(0, 0, Width, Height);
-	m_pDlgImage = new CDlgImage;
+	m_pDlgImage = new CDlgImage; // 자식 클래스에 이미지를 생성하기 위한 객체 생성
 	m_pDlgImage->Create(IDD_CDlgImage, this);
 	m_pDlgImage->ShowWindow(SW_SHOW);
 	m_pDlgImage->MoveWindow(10, 0, 600, 350);
@@ -168,49 +164,8 @@ HCURSOR CMFCStudyappDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CMFCStudyappDlg::initImage() // 도형이 그려질 도화지 생성 설정하기
+void CMFCStudyappDlg::DrawCircle(int nRadius, unsigned char* fm) // 원 그리는 함수
 {
-	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits(); // 이미지의 첫 번째 포인터를 가져온다.
-
-	int nWidth = m_pDlgImage->m_image.GetWidth();
-	int nHeight = m_pDlgImage->m_image.GetHeight();
-	int nBpp = 8;
-
-	if (m_pDlgImage->m_image != NULL)
-	{
-		m_pDlgImage->m_image.Destroy();
-	}
-
-	m_pDlgImage->m_image.Create(nWidth, -nHeight, nBpp);
-	if (nBpp == 8)
-	{
-		static RGBQUAD rgb[256];
-		for (int i = 0; i < 256; i++)
-		{
-			rgb[i].rgbRed = rgb[i].rgbGreen = rgb[i].rgbBlue = i;
-		}
-		m_pDlgImage->m_image.SetColorTable(0, 256, rgb); // 흑백처리
-	}
-
-
-	memset(fm, 0xff, nWidth * nHeight);
-
-	m_pDlgImage->Invalidate();
-
-	CClientDC dc(m_pDlgImage);
-	m_pDlgImage->m_image.Draw(dc, 0, 0);
-}
-
-void CMFCStudyappDlg::UpdateDisplay() // 화면 업데이트 로직 따로 뺀 것.
-{
-	CClientDC dc(this);
-	m_pDlgImage->m_image.Draw(dc, 0, 0);
-}
-
-void CMFCStudyappDlg::DrawCircle(int nRadius, unsigned char* fm)
-{
-	fm = (unsigned char*)m_pDlgImage->m_image.GetBits();
-	
 	int nWidth  = m_pDlgImage->m_image.GetWidth();
 	int nHeight = m_pDlgImage->m_image.GetHeight();
 	int nPitch  = m_pDlgImage->m_image.GetPitch();
@@ -277,7 +232,6 @@ void CMFCStudyappDlg::OnBnClickedSetButton()
 
 CPoint CMFCStudyappDlg::findCenter(unsigned char* fm)
 {
-	fm = (unsigned char*)m_pDlgImage->m_image.GetBits();
 	int nWidth  = m_pDlgImage->m_image.GetWidth();
 	int nHeight = m_pDlgImage->m_image.GetHeight();
 	int nPitch  = m_pDlgImage->m_image.GetPitch();
@@ -331,7 +285,7 @@ CPoint CMFCStudyappDlg::findCenter(unsigned char* fm)
 	return CPoint(nCenterX, nCenterY);
 }
 
-void CMFCStudyappDlg::drawCross(CPoint ptCenter, int size)
+void CMFCStudyappDlg::drawCross(CPoint ptCenter, int size) // 중심에 십자가 그리는 함수
 {
 	CClientDC dc(m_pDlgImage);
 
@@ -352,7 +306,7 @@ void CMFCStudyappDlg::drawCross(CPoint ptCenter, int size)
 	dc.LineTo(nCenterX, nCenterY + nLineLength + 1);
 }
 
-void CMFCStudyappDlg::drawYellowCircle(CPoint ptCenter, int size)
+void CMFCStudyappDlg::drawYellowCircle(CPoint ptCenter, int size) // 원 외곽에 노란 표시선 그리는 함수
 {
 	CClientDC dc(m_pDlgImage);
 

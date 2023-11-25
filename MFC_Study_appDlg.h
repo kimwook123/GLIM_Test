@@ -36,8 +36,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedSetButton();
-	void UpdateDisplay();
-	void initImage();
 	void DrawCircle(int nRadius, unsigned char* fm);
 	void drawCross(CPoint ptCenter, int size);
 	void drawYellowCircle(CPoint ptCenter, int size);
