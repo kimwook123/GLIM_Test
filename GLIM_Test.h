@@ -1,5 +1,5 @@
 ﻿
-// MFC_Study_app.h: PROJECT_NAME 애플리케이션에 대한 주 헤더 파일입니다.
+// GLIM_Test.h: PROJECT_NAME 애플리케이션에 대한 주 헤더 파일입니다.
 //
 
 #pragma once
@@ -11,14 +11,14 @@
 #include "resource.h"		// 주 기호입니다.
 
 
-// CMFCStudyappApp:
-// 이 클래스의 구현에 대해서는 MFC_Study_app.cpp을(를) 참조하세요.
+// CGLIMTestApp:
+// 이 클래스의 구현에 대해서는 GLIM_Test.cpp을(를) 참조하세요.
 //
 
-class CMFCStudyappApp : public CWinApp
+class CGLIMTestApp : public CWinApp
 {
 public:
-	CMFCStudyappApp();
+	CGLIMTestApp();
 
 // 재정의입니다.
 public:
@@ -29,4 +29,4 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
-extern CMFCStudyappApp theApp;
+extern CGLIMTestApp theApp;

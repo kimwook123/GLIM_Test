@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MFC_Study_app.h">
+    <ClInclude Include="GLIM_Test.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="MFC_Study_appDlg.h">
+    <ClInclude Include="GLIM_Test_Dlg.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
@@ -38,10 +38,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MFC_Study_app.cpp">
+    <ClCompile Include="GLIM_Test.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="MFC_Study_appDlg.cpp">
+    <ClCompile Include="GLIM_Test_Dlg.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
@@ -52,17 +52,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="MFCStudyapp.rc">
+    <ResourceCompile Include="GLIM_Test.rc">
       <Filter>리소스 파일</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\MFCStudyapp.rc2">
+    <None Include="res\GLIM_Test.rc2">
       <Filter>리소스 파일</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\MFC_Study_app.ico">
+    <Image Include="res\GLIM_Test.ico">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

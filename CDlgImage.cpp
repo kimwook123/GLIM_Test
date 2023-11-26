@@ -2,10 +2,10 @@
 //
 
 #include "pch.h"
-#include "MFC_Study_app.h"
+#include "GLIM_Test.h"
 #include "afxdialogex.h"
 #include "CDlgImage.h"
-#include "MFC_Study_appDlg.h"
+#include "GLIM_Test_Dlg.h"
 
 
 // CDlgImage 대화 상자

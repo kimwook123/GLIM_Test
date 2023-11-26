@@ -1,27 +1,27 @@
 ﻿
-// MFC_Study_app.cpp: 애플리케이션에 대한 클래스 동작을 정의합니다.
+// GLIM_Test.cpp: 애플리케이션에 대한 클래스 동작을 정의합니다.
 //
 
 #include "pch.h"
 #include "framework.h"
-#include "MFC_Study_app.h"
-#include "MFC_Study_appDlg.h"
+#include "GLIM_Test.h"
+#include "GLIM_Test_Dlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 
-// CMFCStudyappApp
+// CGLIMTestApp
 
-BEGIN_MESSAGE_MAP(CMFCStudyappApp, CWinApp)
+BEGIN_MESSAGE_MAP(CGLIMTestApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 
 // CMFCStudyappApp 생성
 
-CMFCStudyappApp::CMFCStudyappApp()
+CGLIMTestApp::CGLIMTestApp()
 {
 	// 다시 시작 관리자 지원
 	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
@@ -31,14 +31,14 @@ CMFCStudyappApp::CMFCStudyappApp()
 }
 
 
-// 유일한 CMFCStudyappApp 개체입니다.
+// 유일한 CGLIMTestApp 개체입니다.
 
-CMFCStudyappApp theApp;
+CGLIMTestApp theApp;
 
 
 // CMFCStudyappApp 초기화
 
-BOOL CMFCStudyappApp::InitInstance()
+BOOL CGLIMTestApp::InitInstance()
 {
 	// 애플리케이션 매니페스트가 ComCtl32.dll 버전 6 이상을 사용하여 비주얼 스타일을
 	// 사용하도록 지정하는 경우, Windows XP 상에서 반드시 InitCommonControlsEx()가 필요합니다.
@@ -71,7 +71,7 @@ BOOL CMFCStudyappApp::InitInstance()
 	// 적절한 내용으로 수정해야 합니다.
 	SetRegistryKey(_T("로컬 애플리케이션 마법사에서 생성된 애플리케이션"));
 
-	CMFCStudyappDlg dlg;
+	CGLIMTestDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)

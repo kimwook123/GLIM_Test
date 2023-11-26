@@ -4,8 +4,8 @@
 
 #include "pch.h"
 #include "framework.h"
-#include "MFC_Study_app.h"
-#include "MFC_Study_appDlg.h"
+#include "GLIM_Test_Dlg.h"
+#include "GLIM_Test.h"
 #include "afxdialogex.h"
 
 #include <math.h>
@@ -51,31 +51,31 @@ END_MESSAGE_MAP()
 
 // CMFCStudyappDlg 대화 상자
 
-CMFCStudyappDlg::CMFCStudyappDlg(CWnd* pParent /*=nullptr*/)
+CGLIMTestDlg::CGLIMTestDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_MFC_STUDY_APP_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CMFCStudyappDlg::DoDataExchange(CDataExchange* pDX)
+void CGLIMTestDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST1, findCenter_x);
 	DDX_Control(pDX, IDC_LIST2, findCenter_y);
 }
 
-BEGIN_MESSAGE_MAP(CMFCStudyappDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CGLIMTestDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_SET_BUTTON, &CMFCStudyappDlg::OnBnClickedSetButton)
+	ON_BN_CLICKED(IDC_SET_BUTTON, &CGLIMTestDlg::OnBnClickedSetButton)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
-// CMFCStudyappDlg 메시지 처리기
+// CGLIMTestDlg 메시지 처리기
 
-BOOL CMFCStudyappDlg::OnInitDialog()
+BOOL CGLIMTestDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -115,7 +115,7 @@ BOOL CMFCStudyappDlg::OnInitDialog()
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
-void CMFCStudyappDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void CGLIMTestDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
@@ -132,7 +132,7 @@ void CMFCStudyappDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  아래 코드가 필요합니다.  문서/뷰 모델을 사용하는 MFC 애플리케이션의 경우에는
 //  프레임워크에서 이 작업을 자동으로 수행합니다.
 
-void CMFCStudyappDlg::OnPaint()
+void CGLIMTestDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -159,12 +159,12 @@ void CMFCStudyappDlg::OnPaint()
 
 // 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서
 //  이 함수를 호출합니다.
-HCURSOR CMFCStudyappDlg::OnQueryDragIcon()
+HCURSOR CGLIMTestDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CMFCStudyappDlg::DrawCircle(int nRadius, unsigned char* fm) // 원 그리는 함수
+void CGLIMTestDlg::DrawCircle(int nRadius, unsigned char* fm) // 원 그리는 함수
 {
 	int nWidth  = m_pDlgImage->m_image.GetWidth();
 	int nHeight = m_pDlgImage->m_image.GetHeight();
@@ -195,7 +195,7 @@ void CMFCStudyappDlg::DrawCircle(int nRadius, unsigned char* fm) // 원 그리�
 	m_pDlgImage->m_image.Draw(dc, 0, 0);
 }
 
-BOOL CMFCStudyappDlg::isInCircle(int x, int y, int nCenterX, int nCenterY, int nRadius)
+BOOL CGLIMTestDlg::isInCircle(int x, int y, int nCenterX, int nCenterY, int nRadius)
 {
 	bool bRet = false;
 
@@ -211,7 +211,7 @@ BOOL CMFCStudyappDlg::isInCircle(int x, int y, int nCenterX, int nCenterY, int n
 	return bRet;
 }
 
-void CMFCStudyappDlg::OnBnClickedSetButton()
+void CGLIMTestDlg::OnBnClickedSetButton()
 {
 	int nRadius = GetDlgItemInt(IDC_STATIC);
 	unsigned char* fm = (unsigned char*)m_pDlgImage->m_image.GetBits();
@@ -230,7 +230,7 @@ void CMFCStudyappDlg::OnBnClickedSetButton()
 	drawYellowCircle(ptCenter, nRadius);
 }
 
-CPoint CMFCStudyappDlg::findCenter(unsigned char* fm)
+CPoint CGLIMTestDlg::findCenter(unsigned char* fm)
 {
 	int nWidth  = m_pDlgImage->m_image.GetWidth();
 	int nHeight = m_pDlgImage->m_image.GetHeight();
@@ -285,7 +285,7 @@ CPoint CMFCStudyappDlg::findCenter(unsigned char* fm)
 	return CPoint(nCenterX, nCenterY);
 }
 
-void CMFCStudyappDlg::drawCross(CPoint ptCenter, int size) // 중심에 십자가 그리는 함수
+void CGLIMTestDlg::drawCross(CPoint ptCenter, int size) // 중심에 십자가 그리는 함수
 {
 	CClientDC dc(m_pDlgImage);
 
@@ -306,7 +306,7 @@ void CMFCStudyappDlg::drawCross(CPoint ptCenter, int size) // 중심에 십자�
 	dc.LineTo(nCenterX, nCenterY + nLineLength + 1);
 }
 
-void CMFCStudyappDlg::drawYellowCircle(CPoint ptCenter, int size) // 원 외곽에 노란 표시선 그리는 함수
+void CGLIMTestDlg::drawYellowCircle(CPoint ptCenter, int size) // 원 외곽에 노란 표시선 그리는 함수
 {
 	CClientDC dc(m_pDlgImage);
 
@@ -326,7 +326,7 @@ void CMFCStudyappDlg::drawYellowCircle(CPoint ptCenter, int size) // 원 외곽�
 	dc.SelectObject(pOldPen);
 }
 
-void CMFCStudyappDlg::OnDestroy() // new delete
+void CGLIMTestDlg::OnDestroy() // new delete
 {
 	CDialogEx::OnDestroy();
 
